@@ -42,13 +42,18 @@ public class App extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
+        // Create a ball
+        Circle ball = new Circle(10, Color.RED);
+
         // Set the initial position of the ball
         startX.set(100);
         startY.set(100);
-        Circle ball = new Circle(10, Color.RED);
+
+        // Bind the ball's position with the shown position
         ball.centerXProperty().bind(shownX);
         ball.centerYProperty().bind(shownY);
 
+        // Set the shown position to the initial position
         shownX.set(startX.get());
         shownY.set(startY.get());
 
@@ -67,6 +72,10 @@ public class App extends Application {
         double[] velocities = { 10, 5 };
 
         KeyFrame keyFrame = new KeyFrame(duration, event -> {
+            // get the height and width of the pane
+            double height = pane.getHeight();
+            double width = pane.getWidth();
+
             // Update the ball's position
             double x = shownX.get();
             double y = shownY.get();
@@ -77,14 +86,14 @@ public class App extends Application {
 
             // Check for boundaries
             // the ball's radius is 10 thats why we are checking for 10
-            if (x + dx - 10 < 0 || x + dx + 10 > 200) {
+            if (x + dx - 10 < 0 || x + dx + 10 > width) {
                 // Reverse the direction if hitting horizontal boundaries
-                velocities[0] = -dx; 
+                velocities[0] = -dx;
             }
 
-            if (y + dy - 10 < 0 || y + dy + 10 > 200) {
+            if (y + dy - 10 < 0 || y + dy + 10 > height) {
                 // Reverse the direction if hitting vertical boundaries
-                velocities[1] = -dy; 
+                velocities[1] = -dy;
             }
 
             // Update the ball's position with the current velocities
@@ -107,6 +116,7 @@ public class App extends Application {
 
     }
 
+    
     public static void main(String[] args) {
         launch(args);
     }
