@@ -1,6 +1,5 @@
 package test;
 
-
 import javafx.util.Duration;
 
 import javafx.animation.KeyFrame;
@@ -36,41 +35,59 @@ import javafx.stage.Stage;
  */
 public class App extends Application {
 
-   private DoubleProperty startX = new SimpleDoubleProperty();
+    private DoubleProperty startX = new SimpleDoubleProperty();
     private DoubleProperty startY = new SimpleDoubleProperty();
     private DoubleProperty shownX = new SimpleDoubleProperty();
     private DoubleProperty shownY = new SimpleDoubleProperty();
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        
+        // Set the initial position of the ball
+        startX.set(100);
+        startY.set(100);
         Circle ball = new Circle(10, Color.RED);
         ball.centerXProperty().bind(shownX);
         ball.centerYProperty().bind(shownY);
-        
+
+        shownX.set(startX.get());
+        shownY.set(startY.get());
+
+        // Create a Pane
+        Pane pane = new Pane();
+        pane.setPrefSize(200, 200);
+        pane.getChildren().add(ball);
+
         // Create a Timeline
         Timeline timeline = new Timeline();
-        
-        // Set the duration between each execution (e.g., 100 milliseconds)
-        Duration duration = Duration.millis(100);
-        
-        // Create a KeyFrame with the specified duration
+
+        // Set the duration between each execution (50 milliseconds)
+        Duration duration = Duration.millis(50);
+
+        // Define an array to hold the velocities
+        double[] velocities = { 10, 5 };
+
         KeyFrame keyFrame = new KeyFrame(duration, event -> {
             // Update the ball's position
             double x = shownX.get();
             double y = shownY.get();
 
-            double dx = 5;
-            double dy = 5;
+            // Retrieve velocities from the array
+            double dx = velocities[0];
+            double dy = velocities[1];
 
-            if (x < 0 || x > 200) {
-                dx = -dx;
+            // Check for boundaries
+            // the ball's radius is 10 thats why we are checking for 10
+            if (x + dx - 10 < 0 || x + dx + 10 > 200) {
+                // Reverse the direction if hitting horizontal boundaries
+                velocities[0] = -dx; 
             }
-            if (y < 0 || y > 200) {
-                dy = -dy;
+
+            if (y + dy - 10 < 0 || y + dy + 10 > 200) {
+                // Reverse the direction if hitting vertical boundaries
+                velocities[1] = -dy; 
             }
 
-
+            // Update the ball's position with the current velocities
             shownX.set(x + dx);
             shownY.set(y + dy);
         });
@@ -81,11 +98,7 @@ public class App extends Application {
         // Set the cycle count of the Timeline
         timeline.setCycleCount(Timeline.INDEFINITE);
 
-        // Create a Pane
-        Pane pane = new Pane();
-        pane.setPrefSize(200, 200);
-        pane.getChildren().add(ball);
-
+        // Start the Timeline
         timeline.play();
 
         primaryStage.setTitle("Bouncing Ball");
@@ -97,5 +110,5 @@ public class App extends Application {
     public static void main(String[] args) {
         launch(args);
     }
-    
+
 }
